@@ -6,6 +6,10 @@ A REST API built with Node.js, Express, MongoDB and Mongoose. Users register, lo
 
 Repository: https://github.com/teni-create/101568492_COMP3123_Assignment1
 
+Hosted API: https://101568492comp3123assignment1.vercel.app
+
+Hosted health check: https://101568492comp3123assignment1.vercel.app/health
+
 ## Technologies and structure
 
 JavaScript with CommonJS modules; Express 5; Mongoose; dotenv; bcrypt; jsonwebtoken; express-validator; Helmet; express-rate-limit; Winston. Exact dependency versions are recorded in `package-lock.json`.
@@ -202,7 +206,7 @@ Focused checks passed for valid authentication without a false warning; missing,
 
 Import `101568492_COMP3123_Assignment1.postman_collection.json` into Postman. It contains 43 requests organized into eight folders with expected-status assertions. The file contains no recorded responses or claims of a completed automated run. Existing screenshots provide the earlier manual test evidence.
 
-1. Set collection variable `baseUrl` to the running API URL.
+1. Collection variable `baseUrl` defaults to the hosted API. Set it to `http://localhost:3000` for local testing; `localBaseUrl` records that alternative.
 2. Run User A and User B login requests. Their response scripts populate `tokenA`, `tokenB` and user IDs locally.
 3. Set `employeeAId` and `employeeBId` to existing records owned by the respective users, or deliberately run the two creation requests to populate them. Creation requests add records.
 4. Test own-record listing, retrieval and updates, invalid fields, missing/invalid tokens, and cross-user GET/PUT/DELETE in both directions.
@@ -226,7 +230,7 @@ They are test-only application credentials, not Atlas credentials. For a fresh d
 
 ## Evidence and submission
 
-Manual results and screenshots cover registration, login, validation, employee CRUD, ownership rejection and unchanged records, Helmet, rate limiting, MongoDB and local logging. Final supplemental HTTP checks also confirmed both cross-user PUT requests return 403, both owned records remain unchanged, a correctly signed expired JWT returns 401, employee creation without a token returns 401, and client-supplied ownership returns 400. Those results were obtained from actual local API requests. The imported collection has not been run as one complete suite, and missing or incorrect Postman screenshots still require replacement with actual captures.
+Manual results and screenshots cover registration, login, validation, employee CRUD, ownership rejection and unchanged records, Helmet, rate limiting, MongoDB and local logging. Final supplemental HTTP checks also confirmed both cross-user PUT requests return 403, both owned records remain unchanged, a correctly signed expired JWT returns 401, employee creation without a token returns 401, and client-supplied ownership returns 400. Those results were obtained from actual local API requests. The imported collection has not been run as one complete suite, and two cross-user PUT screenshots and the expired-token response screenshot still require replacement/addition in the evidence document. Hosted login, employee-list and health screenshots have now been reviewed and show 200 responses.
 
 Submit the public repository URL, a project ZIP excluding `.env`, `.git`, `node_modules` and private credentials, the Postman collection, README, `.env.example`, configuration/source files, and actual screenshots. Evidence should show health, signup/login, CRUD, validation/errors, MongoDB hashed passwords and ownership, two-user access control, Helmet headers, rate limiting and local logs. D2L also requires hosting on Vercel. Include the verified production URL and deployment evidence; deployment is not complete until the hosted API has been checked.
 
@@ -247,3 +251,10 @@ D2L submission instructions require Vercel hosting. The app exports Express from
 On Vercel, a shared connection promise reuses Mongoose connections within an instance. JSON logs go to Runtime Logs; the required local file logging remains available when running on a laptop. The IP rate limiter trusts one proxy hop only in the Vercel environment. Its in-memory counters are per instance, so the limit is not a global distributed quota across scaled instances. `.vercelignore` keeps local credentials and evidence documents out of the deployment bundle.
 
 Official deployment guidance: https://vercel.com/guides/using-express-with-vercel
+
+
+### Verified hosted results
+
+Production API: https://101568492comp3123assignment1.vercel.app
+
+On October 18, 2026, direct HTTP checks confirmed `/health` returns 200 and the employee-list endpoint without authentication returns 401. Supplied Postman screenshots show hosted User A login, authenticated employee listing and health each return 200. The initial hosted connection failure was resolved after Atlas network access was updated. Vercel deployment-success and masked configuration captures are included in the evidence document. These checks do not claim that every CRUD operation has been rerun on the hosted deployment.

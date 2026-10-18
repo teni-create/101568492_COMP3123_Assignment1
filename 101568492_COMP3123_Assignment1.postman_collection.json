@@ -2,7 +2,7 @@
   "info": {
     "name": "COMP3123 Assignment 1 - Complete Requests",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Prepared from the assignment project routes and existing test scenarios. This file contains request definitions and expected-status assertions, not recorded test results. Existing screenshots remain the evidence of previous runs. Import without rerunning or retaking screenshots. For future use, log in A/B to populate blank token variables; supply existing employee IDs or intentionally create setup records. Save tokens only locally and clear them before export. Signup/login share 10 requests per IP per 15 minutes: run authentication tests in separate windows or wait for Retry-After. Rate-limit and expired-token checks require manual setup. Do not run all folders as an unattended sequence. Deletion is restricted to a separately created disposable record."
+    "description": "Prepared from the assignment project routes and existing test scenarios. This file contains request definitions and expected-status assertions, not recorded test results. Existing screenshots remain the evidence of previous runs. Import without rerunning or retaking screenshots. For future use, log in A/B to populate blank token variables; supply existing employee IDs or intentionally create setup records. Save tokens only locally and clear them before export. Signup/login share 10 requests per IP per 15 minutes: run authentication tests in separate windows or wait for Retry-After. Rate-limit and expired-token checks require manual setup. Do not run all folders as an unattended sequence. Deletion is restricted to a separately created disposable record. Default baseUrl now points to the hosted Vercel API; change it to http://localhost:3000 for local testing. Hosted login, employee listing and health were verified separately from the collection suite."
   },
   "item": [
     {
@@ -1647,7 +1647,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000",
+      "value": "https://101568492comp3123assignment1.vercel.app",
       "type": "string"
     },
     {
@@ -1693,6 +1693,11 @@
     {
       "key": "deleteEmployeeId",
       "value": "",
+      "type": "string"
+    },
+    {
+      "key": "localBaseUrl",
+      "value": "http://localhost:3000",
       "type": "string"
     }
   ]
