@@ -74,7 +74,7 @@ For automatic restarts during development:
 npm run dev
 ```
 
-The application waits for the database connection before listening. Expected startup messages are `MongoDB connected` and `Server running at http://localhost:3000`. Startup failure reports a generic configuration message. Stop the server with Control+C.
+When started locally, the application waits for the database connection before listening. API requests also await a shared connection promise, which avoids concurrent duplicate connections on hosted instances. Expected startup messages are `MongoDB connected` and `Server running at http://localhost:3000`. Startup failure reports a generic configuration message. Stop the server with Control+C.
 
 ## Health check
 
@@ -84,7 +84,7 @@ The application waits for the database connection before listening. Expected sta
 {"status":"ok","message":"API is running"}
 ```
 
-This endpoint confirms the HTTP server is operational. It does not perform a fresh database connectivity check on every request.
+This endpoint confirms the HTTP server is operational. It does not perform a fresh database connectivity check. On Vercel it can respond before the first database connection; verify login or an employee endpoint as well.
 
 ## API endpoints
 
@@ -188,7 +188,7 @@ The actual `.env`, database credentials, JWT secret and `node_modules` are exclu
 
 ## Local logging
 
-Winston creates `logs/app.log` automatically. It stores timestamped JSON events for startup, database connection, login attempts/results, registration, employee operations, validation failures, authentication/ownership failures and centralized errors. Request entries include method, path, status and duration. Files rotate at approximately 5 MiB, retaining up to three files.
+When running locally, Winston creates `logs/app.log` automatically. On Vercel it writes JSON to the console for Runtime Logs instead, because the application filesystem is read-only. It stores timestamped JSON events for startup, database connection, login attempts/results, registration, employee operations, validation failures, authentication/ownership failures and centralized errors. Request entries include method, path, status and duration. Files rotate at approximately 5 MiB, retaining up to three files.
 
 Logging calls deliberately exclude passwords, request bodies, authorization headers, full JWTs and database connection strings. Error handling records error types rather than raw error messages or stack traces. Generated logs are ignored by Git; include the captured logging screenshots as submission evidence. Never publish an unreviewed log file.
 
@@ -226,8 +226,24 @@ They are test-only application credentials, not Atlas credentials. For a fresh d
 
 ## Evidence and submission
 
-Manual results were reported during development for registration, login, validation, employee CRUD, missing/invalid/expired authentication, ownership rejection and unchanged records, Helmet, rate limiting, MongoDB and local logging. The complete screenshot set has not been independently audited against every test in this README, and the imported collection has not been rerun as a complete suite.
+Manual results and screenshots cover registration, login, validation, employee CRUD, ownership rejection and unchanged records, Helmet, rate limiting, MongoDB and local logging. Final supplemental HTTP checks also confirmed both cross-user PUT requests return 403, both owned records remain unchanged, a correctly signed expired JWT returns 401, employee creation without a token returns 401, and client-supplied ownership returns 400. Those results were obtained from actual local API requests. The imported collection has not been run as one complete suite, and missing or incorrect Postman screenshots still require replacement with actual captures.
 
-Submit the public repository URL, a project ZIP excluding `.env`, `.git`, `node_modules` and private credentials, the Postman collection, README, `.env.example`, configuration/source files, and actual screenshots. Evidence should show health, signup/login, CRUD, validation/errors, MongoDB hashed passwords and ownership, two-user access control, Helmet headers, rate limiting and local logs. Include a deployed URL only if deployed; this setup runs locally.
+Submit the public repository URL, a project ZIP excluding `.env`, `.git`, `node_modules` and private credentials, the Postman collection, README, `.env.example`, configuration/source files, and actual screenshots. Evidence should show health, signup/login, CRUD, validation/errors, MongoDB hashed passwords and ownership, two-user access control, Helmet headers, rate limiting and local logs. D2L also requires hosting on Vercel. Include the verified production URL and deployment evidence; deployment is not complete until the hosted API has been checked.
 
 Retain the original screenshots and verify that each displays the real response status and body. No additional test result should be claimed solely because an expected-status assertion exists in the collection.
+
+
+## Vercel deployment
+
+D2L submission instructions require Vercel hosting. The app exports Express from `src/server.js`, which is a recognized native Express entry point. No frontend build command or output directory is needed. Node 24 is specified in `package.json`. The normal local `npm start` behavior is preserved.
+
+1. Push these deployment changes to GitHub.
+2. In Vercel, import the assignment repository and select the Express framework if it is not detected. Keep the repository root as the root directory.
+3. Add private `MONGODB_URI` and `JWT_SECRET`, plus `JWT_EXPIRES_IN=1h`, as Production environment variables. Do not publish their values. The URI must select `comp3123_assignment1`. `PORT` is only needed locally.
+4. Ensure Atlas network access permits the deployment using the course-approved networking setup. Do not assume an allowlist containing only your laptop address will permit Vercel.
+5. Deploy, then verify the production `/health`, signup/login and protected employee endpoints. Health alone does not prove the database connection. Record the actual production URL only after verification.
+6. Keep the deployed API accessible to the marker and capture Ready status plus real Postman requests against its URL. Update the collection `baseUrl` locally when testing the hosted API.
+
+On Vercel, a shared connection promise reuses Mongoose connections within an instance. JSON logs go to Runtime Logs; the required local file logging remains available when running on a laptop. The IP rate limiter trusts one proxy hop only in the Vercel environment. Its in-memory counters are per instance, so the limit is not a global distributed quota across scaled instances. `.vercelignore` keeps local credentials and evidence documents out of the deployment bundle.
+
+Official deployment guidance: https://vercel.com/guides/using-express-with-vercel

@@ -11,6 +11,11 @@ const helmet = require('helmet');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Vercel overwrites X-Forwarded-For with the connecting client address.
+if (process.env.VERCEL === '1') {
+    app.set('trust proxy', 1);
+}
+
 app.use(requestLogger);
 app.use(helmet());
 app.use(express.json());
@@ -21,6 +26,16 @@ app.get('/health', (req, res) => {
         message: 'API is running'
     });
 });
+// Await the shared database connection before handling API operations.
+app.use('/api/v1', async (req, res, next) => {
+    try {
+        await connectDatabase();
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/emp', employeeRoutes);
 
@@ -56,4 +71,8 @@ async function startServer() {
     }
 }
 
-startServer();
+if (require.main === module && process.env.VERCEL !== '1') {
+    startServer();
+}
+
+module.exports = app;

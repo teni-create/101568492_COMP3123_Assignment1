@@ -1,0 +1,12 @@
+node_modules
+.env
+.env.*
+!.env.example
+.git
+.idea
+logs
+*.docx
+*.pdf
+*.zip
+screenshots
+*_verification.json

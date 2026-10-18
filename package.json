@@ -2,7 +2,7 @@
   "name": "101568492_comp3123_assignment1",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js"
@@ -21,5 +21,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.11.2",
     "winston": "^3.19.0"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }
